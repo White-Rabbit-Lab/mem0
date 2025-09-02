@@ -31,12 +31,43 @@
 - PRs: target `custom`. Include a clear summary, motivation, and testing notes; link related issues; add screenshots for UI-related changes (if any).
 - CI/readiness: code formatted and lint-clean; tests pass.
 
+### Create PRs with your fork as base (gh CLI)
+- Preferred: create PRs from your fork targeting your `custom` branch.
+- One‑liner (replace placeholders):
+  - `gh pr create --repo <your_github>/<repo> --base custom --head <your_github>:<feature-branch> --fill`
+- Notes:
+  - `--repo` fixes the base repository to your fork (avoids defaulting to upstream).
+  - `--base` is the target branch in your fork (usually `custom`).
+  - `--head` explicitly points to your feature branch in your fork.
+  - If you run the command inside your fork’s local clone, `--repo` can be omitted and it will still target your fork by default.
+
+- Robust one‑liner from current branch (auto‑detect + push):
+  - `BR=$(git symbolic-ref --quiet --short HEAD) && git push -u origin "$BR" && gh pr create --repo <your_github>/<repo> --base custom --head <your_github>:"$BR" --fill`
+  - Ensures the branch is pushed, and forces PR base to your fork’s `custom`.
+
+- Troubleshooting:
+  - If you see an error like “ambiguous argument 'upstream/custom...<branch>'”, specify both `--repo` and `--head` as above, and ensure the branch is pushed to `origin` first.
+  - If title/body cannot be computed, add `--title` and `--body` or use `--fill` after committing your changes.
+
 ## Branching & Upstream Sync
 - `main`: mirror of `upstream/main` (fast-forward only).
 - `custom`: long-lived branch carrying our private patches; default PR target.
 - Topic branches: `feature/<short-topic>` from `custom`.
 - Sync flow: `git fetch upstream && git checkout main && git pull --ff-only upstream main && git push origin main` then `git checkout custom && git rebase main` (or `git merge --no-ff main`). Force-push to `custom` after rebase.
 - Full policy: see `docs/branching-strategy.md`.
+
+### Start a topic branch from `custom`
+- Ensure `custom` is up to date:
+  - `git checkout custom && git pull --ff-only origin custom`
+- Create your topic branch:
+  - `git checkout -b feature/<short-topic>`
+
+### Quick diffs
+- Working tree changes (unstaged): `git diff`
+- Staged changes: `git diff --staged`
+- Current branch vs `custom` (summary): `git diff --stat custom...HEAD`
+- Current branch vs `custom` (full): `git diff custom...HEAD`
+- File list vs `custom`: `git diff --name-only custom...HEAD`
 
 ## Security & Configuration Tips
 - Do not commit secrets. Use environment variables; see `server/.env.example`.
