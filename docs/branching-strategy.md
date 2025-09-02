@@ -1,6 +1,6 @@
 # Branching and Upstream Sync Strategy
 
-This repository is a fork of `mem0ai/mem0`. We maintain a set of private/custom patches that are not intended to be merged upstream, while continuously syncing upstream changes.
+This repository is a fork of `mem0ai/mem0`. We maintain a set of private/custom patches that are not intended to be merged upstream yet, but we actively sync upstream changes. If a patch has value and is deemed ready, we create a pull request to upstream.
 
 Goals:
 
@@ -12,7 +12,7 @@ Goals:
 
 - `main`: Upstream mirror. Do not commit directly here. Updated only by fast-forwarding to `upstream/main`.
 - `custom`: Long-lived branch that carries our private/custom patches. Daily development happens here.
-- `feature/*`: Short-lived topic branches created from `custom` for individual changes.
+- `{topic-branch}/*`: Short-lived topic branches created from `custom` for individual changes.
 
 ## Remotes
 
@@ -146,4 +146,3 @@ This approach makes each change explicit but adds some overhead. For most cases,
 - Regularly sync `main` with `upstream/main` using fast-forward only.
 - Rebase `custom` onto `main` (default) and force-push as needed.
 - Keep custom changes isolated to reduce conflicts.
-
