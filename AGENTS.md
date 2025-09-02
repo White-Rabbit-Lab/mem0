@@ -41,6 +41,14 @@
   - `--head` explicitly points to your feature branch in your fork.
   - If you run the command inside your fork’s local clone, `--repo` can be omitted and it will still target your fork by default.
 
+- Robust one‑liner from current branch (auto‑detect + push):
+  - `BR=$(git symbolic-ref --quiet --short HEAD) && git push -u origin "$BR" && gh pr create --repo <your_github>/<repo> --base custom --head <your_github>:"$BR" --fill`
+  - Ensures the branch is pushed, and forces PR base to your fork’s `custom`.
+
+- Troubleshooting:
+  - If you see an error like “ambiguous argument 'upstream/custom...<branch>'”, specify both `--repo` and `--head` as above, and ensure the branch is pushed to `origin` first.
+  - If title/body cannot be computed, add `--title` and `--body` or use `--fill` after committing your changes.
+
 ## Branching & Upstream Sync
 - `main`: mirror of `upstream/main` (fast-forward only).
 - `custom`: long-lived branch carrying our private patches; default PR target.
