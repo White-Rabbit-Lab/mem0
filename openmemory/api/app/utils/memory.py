@@ -235,12 +235,34 @@ def get_default_memory_config():
         })
     
     print(f"Auto-detected vector store: {vector_store_provider} with config: {vector_store_config}")
-    
+
+    # Optionally configure graph store (Neo4j) if env vars are present
+    graph_store = None
+    neo4j_url = os.environ.get('NEO4J_URL')
+    neo4j_username = os.environ.get('NEO4J_USERNAME')
+    neo4j_password = os.environ.get('NEO4J_PASSWORD')
+    neo4j_database = os.environ.get('NEO4J_DATABASE', 'neo4j')
+    base_label = os.environ.get('NEO4J_BASE_LABEL', 'true').lower() in ['1', 'true', 'yes']
+
+    if neo4j_url and neo4j_username and neo4j_password:
+        graph_store = {
+            "provider": "neo4j",
+            "config": {
+                "url": neo4j_url,
+                "username": neo4j_username,
+                "password": neo4j_password,
+                "database": neo4j_database,
+                "base_label": base_label,
+            },
+        }
+        print("Configured graph store: neo4j")
+
     return {
         "vector_store": {
             "provider": vector_store_provider,
             "config": vector_store_config
         },
+        **({"graph_store": graph_store} if graph_store else {}),
         "llm": {
             "provider": "openai",
             "config": {
@@ -342,6 +364,10 @@ def get_memory_client(custom_instructions: str = None):
 
                     if "vector_store" in mem0_config and mem0_config["vector_store"] is not None:
                         config["vector_store"] = mem0_config["vector_store"]
+                    
+                    # Update Graph Store configuration if available
+                    if "graph_store" in mem0_config and mem0_config["graph_store"] is not None:
+                        config["graph_store"] = mem0_config["graph_store"]
             else:
                 print("No configuration found in database, using defaults")
                     
