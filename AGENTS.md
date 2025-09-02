@@ -31,6 +31,13 @@
 - PRs: target `custom`. Include a clear summary, motivation, and testing notes; link related issues; add screenshots for UI-related changes (if any).
 - CI/readiness: code formatted and lint-clean; tests pass.
 
+## Branching & Upstream Sync
+- `main`: mirror of `upstream/main` (fast-forward only).
+- `custom`: long-lived branch carrying our private patches; default PR target.
+- Topic branches: `feature/<short-topic>` from `custom`.
+- Sync flow: `git fetch upstream && git checkout main && git pull --ff-only upstream main && git push origin main` then `git checkout custom && git rebase main` (or `git merge --no-ff main`). Force-push to `custom` after rebase.
+- Full policy: see `docs/branching-strategy.md`.
+
 ## Security & Configuration Tips
 - Do not commit secrets. Use environment variables; see `server/.env.example`.
 - For local server, set `OPENAI_API_KEY` and backing store credentials (Postgres/Neo4j) via `.env`.
