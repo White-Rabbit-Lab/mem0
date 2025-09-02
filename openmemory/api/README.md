@@ -25,6 +25,24 @@ make up
 
 The API will be available at `http://localhost:8765`
 
+## Enable Neo4j Graph Store
+
+OpenMemory can optionally use Neo4j as a graph store (in addition to the vector store). Set the following environment variables to enable it:
+
+- `NEO4J_URL` (e.g., `neo4j://localhost:7687` or `neo4j://neo4j:7687` in Docker)
+- `NEO4J_USERNAME` (e.g., `neo4j`)
+- `NEO4J_PASSWORD` (e.g., `password`)
+- `NEO4J_DATABASE` (default `neo4j`)
+- `NEO4J_BASE_LABEL` (default `true`)
+
+The provided Docker Compose (`openmemory/docker-compose.yml`) already includes a `neo4j` service and passes these env vars to the API container. To start everything:
+
+```bash
+docker compose up --build
+```
+
+You can also override graph settings via the persisted config by writing a `mem0.graph_store` block; it takes precedence over env defaults.
+
 ### Common Docker Commands
 
 - View logs: `make logs`
